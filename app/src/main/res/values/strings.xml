@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">BIClient</string>
+    <string name="hello_world">Hello world</string>
+    <string name="tab_me">Tab Me</string>
 </resources>
