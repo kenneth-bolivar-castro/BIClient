@@ -28,13 +28,13 @@ class MainActivity : AppCompatActivity() {
 
         var token = preferences.getString(SettingsActivity.API_TOKEN_TEXT, null)
         if(null == token) {
-            Toast.makeText(this,"API Token es requerido",Toast.LENGTH_LONG).show()
+            Toast.makeText(this,getString(R.string.api_token_required),Toast.LENGTH_LONG).show()
             openSettingActivity()
         }
 
         var env = preferences.getString(SettingsActivity.ENV_LIST, null)
         if (null == env) {
-            Toast.makeText(this,"Ambiente es requerido",Toast.LENGTH_LONG).show()
+            Toast.makeText(this,getString(R.string.env_required),Toast.LENGTH_LONG).show()
             openSettingActivity()
         }
 

@@ -11,6 +11,8 @@
 
     <string name="pref_title_add_friends_to_messages">Ambiente de ejecucion</string>
     <string name="item_settings">Configuraciones</string>
+    <string name="api_token_required">API Token es requerido</string>
+    <string name="env_required">Ambiente es requerido</string>
     <string-array name="pref_example_list_titles">
         <item>Pruebas</item>
         <item>Produccion</item>
