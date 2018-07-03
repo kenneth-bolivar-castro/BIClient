@@ -26,14 +26,14 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         val preferences = PreferenceManager.getDefaultSharedPreferences(this)
 
-        var token = preferences.getString(SettingsActivity.API_TOKEN_TEXT, null)
-        if(null == token) {
+        var token = preferences.getString(SettingsActivity.API_TOKEN_TEXT, "")
+        if(token.isEmpty()) {
             Toast.makeText(this,getString(R.string.api_token_required),Toast.LENGTH_LONG).show()
             openSettingActivity()
         }
 
-        var env = preferences.getString(SettingsActivity.ENV_LIST, null)
-        if (null == env) {
+        var env = preferences.getString(SettingsActivity.ENV_LIST, "-1")
+        if ("-1" == env) {
             Toast.makeText(this,getString(R.string.env_required),Toast.LENGTH_LONG).show()
             openSettingActivity()
         }
