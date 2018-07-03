@@ -4,7 +4,6 @@ import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.preference.PreferenceManager
-import android.util.Log.v
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Button
@@ -22,8 +21,24 @@ class MainActivity : AppCompatActivity() {
             val editText = findViewById<EditText>(R.id.editText)
             Toast.makeText(this, editText.text.toString(), Toast.LENGTH_LONG).show()
         }
+    }
 
-        v("MainActivity",  SettingsActivity.API_TOKEN_TEXT)
+    override fun onResume() {
+        val preferences = PreferenceManager.getDefaultSharedPreferences(this)
+
+        var token = preferences.getString(SettingsActivity.API_TOKEN_TEXT, null)
+        if(null == token) {
+            Toast.makeText(this,"API Token es requerido",Toast.LENGTH_LONG).show()
+            openSettingActivity()
+        }
+
+        var env = preferences.getString(SettingsActivity.ENV_LIST, null)
+        if (null == env) {
+            Toast.makeText(this,"Ambiente es requerido",Toast.LENGTH_LONG).show()
+            openSettingActivity()
+        }
+
+        return super.onResume()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -34,9 +49,13 @@ class MainActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when(item?.itemId){
             R.id.item_settings -> {
-                startActivity(Intent(this, SettingsActivity::class.java))
+                openSettingActivity()
             }
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    private fun openSettingActivity() {
+        startActivity(Intent(this, SettingsActivity::class.java))
     }
 }
