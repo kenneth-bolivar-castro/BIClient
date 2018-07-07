@@ -3,38 +3,30 @@ package com.asd2.uaca.biclient
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.preference.PreferenceManager
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.Button
-import android.widget.EditText
 import android.widget.Toast
+import com.asd2.uaca.business.ApiCredentials
+import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
+
+    private lateinit var apiCredentials :ApiCredentials
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        //
+        apiCredentials = ApiCredentials(this)
 
-        val btnTabMe = findViewById<Button>(R.id.btnTabMe)
-        btnTabMe.setOnClickListener{
-            val editText = findViewById<EditText>(R.id.editText)
-            Toast.makeText(this, editText.text.toString(), Toast.LENGTH_LONG).show()
-        }
+        //
+        loadEntries()
     }
 
     override fun onResume() {
-        val preferences = PreferenceManager.getDefaultSharedPreferences(this)
-
-        var token = preferences.getString(SettingsActivity.API_TOKEN_TEXT, "")
-        if(token.isEmpty()) {
-            Toast.makeText(this,getString(R.string.api_token_required),Toast.LENGTH_LONG).show()
-            openSettingActivity()
-        }
-
-        var env = preferences.getString(SettingsActivity.ENV_LIST, "-1")
-        if ("-1" == env) {
-            Toast.makeText(this,getString(R.string.env_required),Toast.LENGTH_LONG).show()
+        //
+        if(!apiCredentials.hasCredentialsDefined()) {
+            Toast.makeText(this,getString(R.string.credentials_required),Toast.LENGTH_LONG).show()
             openSettingActivity()
         }
 
@@ -51,8 +43,16 @@ class MainActivity : AppCompatActivity() {
             R.id.item_settings -> {
                 openSettingActivity()
             }
+            R.id.item_reload -> {
+                loadEntries()
+            }
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    private fun loadEntries() {
+        Toast.makeText(this, getString(R.string.load_entires_message), Toast.LENGTH_LONG).show()
+        apiCredentials.getEntries(txtViewToken)
     }
 
     private fun openSettingActivity() {

@@ -6,4 +6,8 @@
         android:id="@+id/item_settings"
         android:title="@string/item_settings"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/item_reload"
+        android:title="@string/reload"
+        app:showAsAction="never" />
 </menu>
