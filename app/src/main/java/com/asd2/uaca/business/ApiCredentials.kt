@@ -1,66 +1,58 @@
 package com.asd2.uaca.business
 
 import android.content.Context
-import android.content.SharedPreferences
-import android.preference.PreferenceManager
-import android.util.Log
-import android.widget.TextView
 import android.widget.Toast
-import com.android.volley.AuthFailureError
-import com.android.volley.Request
 import com.android.volley.Response
-import com.android.volley.toolbox.StringRequest
-import com.android.volley.toolbox.Volley
-import com.asd2.uaca.biclient.SettingsActivity
 import org.json.JSONObject
 
-class ApiCredentials(val context: Context) {
+class ApiCredentials(private val context: Context) {
 
-    var preferences: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
-    var bearerToken: String? = null
+    private val settings: Settings = Settings(context)
 
     fun hasCredentialsDefined(): Boolean {
         //
-        if (preferences.getString(SettingsActivity.API_TOKEN_TEXT, "").isEmpty()) {
+        if (settings.apiToken.isEmpty()) {
             return false
-        } else if ("-1" == preferences.getString(SettingsActivity.ENV_LIST, "-1")) {
+        } else if ("-1" == settings.endpoint) {
             return false
         }
 
         return true
     }
 
-    fun getEntries(txtViewToken: TextView) {
+    fun setTokenAndRunCallback(callback: (bearer: String) -> Unit) {
         if (hasCredentialsDefined().not()) {
             return
         }
 
-        val queue = Volley.newRequestQueue(context)
-        val url = preferences.getString(SettingsActivity.ENV_LIST, null)
-        Log.d(Log.DEBUG.toString(), url)
+        // Setup parameters to consume TOKEN
+        val params = hashMapOf(
+                "grant_type" to GRANT_TYPE,
+                "client_id" to CLIENT_ID,
+                "client_secret" to settings.apiToken
+        )
 
-        val request = object : StringRequest(Request.Method.POST, url,
-                Response.Listener { response ->
-                    val result = JSONObject(response)
-                    //
-                    bearerToken = result.getString("access_token")
+        // Create new httpClient
+        val httpClient = HttpClient(context)
 
-                    txtViewToken.text = bearerToken
-                }, Response.ErrorListener { error ->
-            Toast.makeText(context, error.message, Toast.LENGTH_LONG).show()
-        }) {
-            @Throws(AuthFailureError::class)
-            override fun getParams(): Map<String, String>? {
-                //
-                val params = HashMap<String, String>()
-                params["grant_type"] = "client_credentials"
-                params["client_id"] = "aspnet-mvc-biclient-android"
-                params["client_secret"] = preferences.getString(SettingsActivity.API_TOKEN_TEXT, null)
+        // Setup url to retrieve TOKEN
+        httpClient.url = settings.endpoint + API_TOKEN_PATH
 
-                return params
-            }
-        }
+        // Consume web-service by POST method
+        httpClient.post(Response.Listener { response ->
+            // Parse result into a JSON object
+            val result = JSONObject(response)
 
-        queue.add(request)
+            // Extract bearer token value
+            callback(result.getString("access_token"))
+        }, Response.ErrorListener {
+            Toast.makeText(context, it.message, Toast.LENGTH_LONG).show()
+        }, params)
+    }
+
+    companion object {
+        const val API_TOKEN_PATH = "/api/token"
+        const val GRANT_TYPE = "client_credentials"
+        const val CLIENT_ID = "aspnet-mvc-biclient-android"
     }
 }

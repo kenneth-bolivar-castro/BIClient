@@ -7,6 +7,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
 import com.asd2.uaca.business.ApiCredentials
+import com.asd2.uaca.data.Entry
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
@@ -16,15 +17,16 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        //
+
+        // Init API credentials model
         apiCredentials = ApiCredentials(this)
 
-        //
+        // Load all entries from web-service
         loadEntries()
     }
 
     override fun onResume() {
-        //
+        // Verify when credentials were defined
         if(!apiCredentials.hasCredentialsDefined()) {
             Toast.makeText(this,getString(R.string.credentials_required),Toast.LENGTH_LONG).show()
             openSettingActivity()
@@ -52,7 +54,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun loadEntries() {
         Toast.makeText(this, getString(R.string.load_entires_message), Toast.LENGTH_LONG).show()
-        apiCredentials.getEntries(txtViewToken)
+        Entry.loadEntries(this, txtView)
     }
 
     private fun openSettingActivity() {
