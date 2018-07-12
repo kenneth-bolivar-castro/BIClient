@@ -23,4 +23,11 @@
         <item>https://webmvc-bi-client.azurewebsites.net</item>
     </string-array>
 
+    <!-- Strings related to Entry -->
+
+    <string name="title_activity_entry">Solicitud</string>
+    <string-array name="list_entry_statuses">
+        <item>Solicitud</item>
+    </string-array>
+
 </resources>

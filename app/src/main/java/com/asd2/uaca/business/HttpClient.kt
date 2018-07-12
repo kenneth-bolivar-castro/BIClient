@@ -1,7 +1,6 @@
 package com.asd2.uaca.business
 
 import android.content.Context
-import android.util.Log
 import com.android.volley.AuthFailureError
 import com.android.volley.Request
 import com.android.volley.Response.ErrorListener

@@ -9,10 +9,14 @@ import android.widget.Toast
 import com.asd2.uaca.business.ApiCredentials
 import com.asd2.uaca.data.Entry
 import kotlinx.android.synthetic.main.activity_main.*
+import android.widget.ArrayAdapter
+
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var apiCredentials :ApiCredentials
+    private lateinit var apiCredentials: ApiCredentials
+    var entries = arrayOf("Cocina de gas con horno")
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,8 +31,8 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         // Verify when credentials were defined
-        if(!apiCredentials.hasCredentialsDefined()) {
-            Toast.makeText(this,getString(R.string.credentials_required),Toast.LENGTH_LONG).show()
+        if (!apiCredentials.hasCredentialsDefined()) {
+            Toast.makeText(this, getString(R.string.credentials_required), Toast.LENGTH_LONG).show()
             openSettingActivity()
         }
 
@@ -41,7 +45,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        when(item?.itemId){
+        when (item?.itemId) {
             R.id.item_settings -> {
                 openSettingActivity()
             }
@@ -55,6 +59,15 @@ class MainActivity : AppCompatActivity() {
     private fun loadEntries() {
         Toast.makeText(this, getString(R.string.load_entires_message), Toast.LENGTH_LONG).show()
         Entry.loadEntries(this, txtView)
+
+        listViewEntries.adapter = ArrayAdapter<String>(this,
+                android.R.layout.simple_list_item_1,
+                entries
+        )
+
+        listViewEntries.setOnItemClickListener { adapterView, view, i, l ->
+            startActivity(Intent(this, EntryActivity::class.java))
+        }
     }
 
     private fun openSettingActivity() {
