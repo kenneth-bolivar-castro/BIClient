@@ -11,12 +11,9 @@ import com.asd2.uaca.data.Entry
 import kotlinx.android.synthetic.main.activity_main.*
 import android.widget.ArrayAdapter
 
-
 class MainActivity : AppCompatActivity() {
 
     private lateinit var apiCredentials: ApiCredentials
-    var entries = arrayOf("Cocina de gas con horno")
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,12 +57,24 @@ class MainActivity : AppCompatActivity() {
         Toast.makeText(this, getString(R.string.load_entires_message), Toast.LENGTH_LONG).show()
         Entry.loadEntries(this, txtView)
 
+        val entries = arrayOf(
+                "Cocina de gas con horno",
+                "Aire acondicionado 12 000 VTU"
+        )
+        val entryIds = intArrayOf(212, 452)
+
         listViewEntries.adapter = ArrayAdapter<String>(this,
                 android.R.layout.simple_list_item_1,
                 entries
         )
 
-        listViewEntries.setOnItemClickListener { adapterView, view, i, l ->
+        listViewEntries.setOnItemClickListener { parent, view, index, id ->
+            //
+            Toast.makeText(this,
+                    "EntryId: ${entryIds.get(index)} => Entry: ${entries.get(index)}",
+                    Toast.LENGTH_LONG
+            ).show()
+            //
             startActivity(Intent(this, EntryActivity::class.java))
         }
     }

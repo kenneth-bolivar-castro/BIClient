@@ -7,7 +7,6 @@ import com.android.volley.Response
 import com.asd2.uaca.business.ApiCredentials
 import com.asd2.uaca.business.HttpClient
 import com.asd2.uaca.business.Settings
-import org.json.JSONObject
 import java.util.*
 
 class Entry(val key: Int, val created: Date, val comments: String, val item: String, val client: Client, val userId: String) {
