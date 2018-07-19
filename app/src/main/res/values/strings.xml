@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name">BI-Client</string>
 
+    <string name="error_http">Intenta nuevamente. Problema con el servidor </string>
+
     <!-- Strings related to Main activity -->
 
     <string name="title_activity_settings">General</string>

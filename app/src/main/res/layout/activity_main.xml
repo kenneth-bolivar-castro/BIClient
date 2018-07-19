@@ -20,7 +20,7 @@
             android:id="@+id/listViewEntries"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@+id/txtView"></ListView>
+            app:layout_constraintTop_toBottomOf="@+id/txtView" />
     </android.support.constraint.ConstraintLayout>
 
     <android.support.design.widget.FloatingActionButton
