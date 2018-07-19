@@ -11,6 +11,7 @@ import org.json.JSONArray
 
 class EntryManager(private val context: Context,private val apiCredentials: ApiCredentials) {
 
+    private var settings: Settings = Settings(context)
     lateinit var txtView: TextView
     lateinit var listView: ListView
     var entryIds = intArrayOf(1, 2)
@@ -35,7 +36,7 @@ class EntryManager(private val context: Context,private val apiCredentials: ApiC
             val httpClient = HttpClient(context)
 
             // Setup url to retrieve TOKEN
-            httpClient.url = Settings(context).endpoint + Entry.ENTRY_PATH
+            httpClient.url = settings.endpoint + Entry.ENTRY_PATH
 
             // Setup authorize attribute
             httpClient.authorization = it

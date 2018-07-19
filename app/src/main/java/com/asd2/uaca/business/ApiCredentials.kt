@@ -12,6 +12,7 @@ class ApiCredentials(private val context: Context) {
     private val settings: Settings = Settings(context)
     lateinit var txtView: TextView
 
+    // TODO("Verify that a countDownTimer is already running in background.")
     fun cleanUpTokenAccessAt(expiresInSeconds: Long) {
         // Setup countdown time to remove access token stored
         object : CountDownTimer(
@@ -67,17 +68,14 @@ class ApiCredentials(private val context: Context) {
             // Parse result into a JSON object
             val result = JSONObject(response)
 
-            // Extract access token
-            var accessToken = result.getString("access_token")
-
             // Setup access token into settings
-            settings.accessToken = accessToken
+            settings.accessToken = result.getString("access_token")
 
             // Setup time to clean up access token
             cleanUpTokenAccessAt(result.getLong("expires_in"))
 
             // Extract bearer token value
-            callback(accessToken)
+            callback(settings.accessToken!!)
         }, Response.ErrorListener {
             Common.showErrorMessage(context, txtView, it.message)
         }, params)
