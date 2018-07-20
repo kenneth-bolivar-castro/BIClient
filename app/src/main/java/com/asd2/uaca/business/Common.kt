@@ -9,7 +9,10 @@ class Common {
     companion object {
 
         fun showErrorMessage(context: Context, txtView: TextView, message: String?) {
-            val text = context.resources.getString(R.string.error_http) + message
+            var text = context.resources.getString(R.string.error_http)
+            if(null != message) {
+                text += message
+            }
             txtView.text = text
         }
     }

@@ -10,6 +10,8 @@ import com.asd2.uaca.business.ApiCredentials
 import kotlinx.android.synthetic.main.activity_main.*
 import android.widget.ArrayAdapter
 import com.asd2.uaca.business.EntryManager
+import com.asd2.uaca.data.Entry
+import java.io.Serializable
 
 class MainActivity : AppCompatActivity() {
 
@@ -80,12 +82,13 @@ class MainActivity : AppCompatActivity() {
 
         listViewEntries.setOnItemClickListener { parent, view, index, id ->
             //
-            Toast.makeText(this,
-                    "EntryId: ${entryManager.entryIds[index]}",
-                    Toast.LENGTH_LONG
-            ).show()
+            val intent = Intent(this, EntryActivity::class.java)
+
             //
-            startActivity(Intent(this, EntryActivity::class.java))
+            //intent.putExtra(Entry.CURRENT_ENTRY, entryManager.entries[index] as Serializable)
+
+            //
+            startActivity(intent)
         }
     }
 

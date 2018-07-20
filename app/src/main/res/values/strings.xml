@@ -28,8 +28,17 @@
     <!-- Strings related to Entry -->
 
     <string name="title_activity_entry">Solicitud</string>
+    <string name="entry_dni_label">Cedula</string>
+    <string name="entry_status_label">Estado</string>
+    <string name="entry_comment_label">Comentario</string>
+    <string name="entry_item_label">Articulo</string>
+    <string name="entry_client_label">Cliente</string>
+    <string name="entry_date_label">Fecha</string>
     <string-array name="list_entry_statuses">
         <item>Solicitud</item>
+        <item>Cancelado</item>
+        <item>Concretada</item>
+        <item>Sin inventario</item>
     </string-array>
 
 </resources>
