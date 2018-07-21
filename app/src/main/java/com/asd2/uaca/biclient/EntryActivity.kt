@@ -106,7 +106,7 @@ class EntryActivity : AppCompatActivity() {
     }
 
     private fun setAutocomplete() {
-        
+
     }
 
     private fun setUpCurrentEntry() {
