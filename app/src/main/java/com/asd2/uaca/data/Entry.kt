@@ -2,7 +2,7 @@ package com.asd2.uaca.data
 
 import java.io.Serializable
 
-class Entry(var key: Int, var status: Statuses = Statuses.NEW) : Serializable {
+data class Entry(var key: Int, var status: Statuses = Statuses.NEW) : Serializable {
 
     enum class Statuses {
         NEW,

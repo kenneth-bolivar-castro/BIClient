@@ -28,11 +28,8 @@ class EntryActivity : AppCompatActivity() {
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-//        entry = intent.getSerializableExtra(Entry.CURRENT_ENTRY) as Entry
-//        Toast.makeText(this,
-//                entry.item,
-//                Toast.LENGTH_LONG
-//        ).show()
+        //
+        this.setUpCurrentEntry()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -41,5 +38,11 @@ class EntryActivity : AppCompatActivity() {
             return true
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    private fun setUpCurrentEntry() {
+        //
+        entry = intent.getSerializableExtra(Entry.CURRENT_ENTRY) as Entry
+
     }
 }

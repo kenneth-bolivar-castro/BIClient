@@ -1,6 +1,8 @@
 package com.asd2.uaca.data
 
-class Client(val key: Int) {
+import java.io.Serializable
+
+data class Client(val key: Int) : Serializable {
 
     lateinit var fullname: String
     lateinit var dni: String

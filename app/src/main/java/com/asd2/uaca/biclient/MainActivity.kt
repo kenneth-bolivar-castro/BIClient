@@ -8,10 +8,8 @@ import android.view.MenuItem
 import android.widget.Toast
 import com.asd2.uaca.business.ApiCredentials
 import kotlinx.android.synthetic.main.activity_main.*
-import android.widget.ArrayAdapter
 import com.asd2.uaca.business.EntryManager
 import com.asd2.uaca.data.Entry
-import java.io.Serializable
 
 class MainActivity : AppCompatActivity() {
 
@@ -21,6 +19,12 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        // Add listener to floatActionButton
+        fltActionAdd.setOnClickListener {
+            //
+            openEntryActivity(Entry(0))
+        }
 
         // Init attributes
         initialization()
@@ -82,17 +86,22 @@ class MainActivity : AppCompatActivity() {
 
         listViewEntries.setOnItemClickListener { parent, view, index, id ->
             //
-            val intent = Intent(this, EntryActivity::class.java)
-
-            //
-            //intent.putExtra(Entry.CURRENT_ENTRY, entryManager.entries[index] as Serializable)
-
-            //
-            startActivity(intent)
+            openEntryActivity(entryManager.entries[index])
         }
     }
 
     private fun openSettingActivity() {
         startActivity(Intent(this, SettingsActivity::class.java))
+    }
+
+    private fun openEntryActivity(entry: Entry) {
+        //
+        val intent = Intent(this, EntryActivity::class.java)
+
+        //
+        intent.putExtra(Entry.CURRENT_ENTRY, entry)
+
+        //
+        startActivity(intent)
     }
 }
