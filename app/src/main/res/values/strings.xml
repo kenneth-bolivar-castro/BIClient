@@ -34,6 +34,7 @@
     <string name="entry_item_label">Articulo</string>
     <string name="entry_client_label">Cliente</string>
     <string name="entry_date_label">Fecha</string>
+    <string name="btn_entry_save">Salvar</string>
     <string-array name="list_entry_statuses">
         <item>Solicitud</item>
         <item>Cancelado</item>

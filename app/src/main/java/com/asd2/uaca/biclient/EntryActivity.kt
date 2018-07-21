@@ -1,35 +1,32 @@
 package com.asd2.uaca.biclient
 
+import android.app.DatePickerDialog
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.view.MenuItem
+import android.view.View
 import android.widget.ArrayAdapter
-import android.widget.Toast
+import android.widget.DatePicker
 import com.asd2.uaca.data.Entry
 import kotlinx.android.synthetic.main.activity_entry.*
+import java.text.SimpleDateFormat
+import java.util.*
 
 class EntryActivity : AppCompatActivity() {
 
     private lateinit var entry: Entry
+    private lateinit var calendar: Calendar
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_entry)
 
-
-        val adapter = ArrayAdapter.createFromResource(
-                this,
-                R.array.list_entry_statuses,
-                android.R.layout.simple_spinner_item
-        )
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        spinStatuses.adapter = adapter
-
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        //
+        initializeElements()
 
         //
-        this.setUpCurrentEntry()
+        setUpCurrentEntry()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -40,9 +37,96 @@ class EntryActivity : AppCompatActivity() {
         return super.onOptionsItemSelected(item)
     }
 
+    private fun initializeElements() {
+        setSpinnerOptions()
+        setDatePickerCalendar()
+        setAutocomplete()
+
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+    }
+
+    private fun setSpinnerOptions() {
+        val adapter = ArrayAdapter.createFromResource(
+                this,
+                R.array.list_entry_statuses,
+                android.R.layout.simple_spinner_item
+        )
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        spinStatuses.adapter = adapter
+    }
+
+    private fun formatDate(year:Int, month:Int, day:Int): String {
+        // Create a Date variable/object with user chosen date
+        calendar.set(year, month, day, 0, 0, 0)
+        val chosenDate = calendar.time
+
+        // Format the date picker selected date
+        return SimpleDateFormat("dd-MM-yyyy").format(chosenDate)
+    }
+
+    private fun setDatePickerCalendar() {
+        //
+        calendar = Calendar.getInstance()
+
+        //
+        txtDate.setOnFocusChangeListener { view, isFocus ->
+            //
+            if(isFocus.not()) {
+                return@setOnFocusChangeListener
+            }
+
+            // Get the system current date
+            val year = calendar.get(Calendar.YEAR)
+            val month = calendar.get(Calendar.MONTH)
+            val day = calendar.get(Calendar.DAY_OF_MONTH)
+
+            //
+            DatePickerDialog(
+                    this,
+                    android.R.style.Theme_DeviceDefault_Dialog_NoActionBar_MinWidth,
+                    DatePickerDialog.OnDateSetListener { _: DatePicker,
+                                                         selectedYear: Int,
+                                                         selectedMonth: Int,
+                                                         selectedDay: Int ->
+                        // Setup chose date
+                        calendar.set(selectedYear, selectedMonth, selectedDay)
+
+                        // Setup format chose date
+                        val date = formatDate(selectedYear, selectedMonth, selectedDay)
+                        txtDate.setText(date)
+
+                        // Move focus to another field
+                        auTxtDNI.requestFocus()
+                    },
+                    year,
+                    month,
+                    day
+            ).show()
+        }
+    }
+
+    private fun setAutocomplete() {
+        
+    }
+
     private fun setUpCurrentEntry() {
         //
         entry = intent.getSerializableExtra(Entry.CURRENT_ENTRY) as Entry
 
+        // If entry.key is zero, then disappear status dropdown
+        if (0 == entry.key) {
+            txtStatusLabel.visibility = View.GONE
+            spinStatuses.visibility = View.GONE
+        } else {
+            // Populate entry info
+            txtDate.setText(entry.created)
+            auTxtDNI.setText(entry.client.dni)
+            txtClientName.setText(entry.client.fullname)
+            txtEntryItem.setText(entry.item)
+            txtEntryComments.setText(entry.comments)
+
+            // Otherwise setup status value
+            spinStatuses.setSelection(Entry.getStatusIndex(entry.status))
+        }
     }
 }

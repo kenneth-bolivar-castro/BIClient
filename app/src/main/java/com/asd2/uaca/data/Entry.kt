@@ -22,12 +22,21 @@ data class Entry(var key: Int, var status: Statuses = Statuses.NEW) : Serializab
         const val CURRENT_ENTRY = "current_entry_instance"
 
         fun getStatus(status: Int): Statuses {
-            return when(status) {
+            return when (status) {
                 0 -> Statuses.NEW
                 1 -> Statuses.CANCELED
                 2 -> Statuses.COMPLETED
                 3 -> Statuses.OUT_SCOPE
                 else -> throw RuntimeException("Invalid status value")
+            }
+        }
+
+        fun getStatusIndex(status: Statuses): Int {
+            return when (status) {
+                Statuses.NEW -> 0
+                Statuses.CANCELED -> 1
+                Statuses.COMPLETED -> 2
+                Statuses.OUT_SCOPE -> 3
             }
         }
     }

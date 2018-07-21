@@ -9,4 +9,8 @@ data class Client(val key: Int) : Serializable {
     lateinit var phoneNumber: String
     lateinit var email: String
 
+    companion object {
+
+        const val CLIENT_PATH = "/api/clients"
+    }
 }

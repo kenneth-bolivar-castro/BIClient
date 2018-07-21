@@ -1,6 +1,7 @@
 package com.asd2.uaca.business
 
 import android.content.Context
+import android.os.Build
 import android.widget.ArrayAdapter
 import android.widget.ListView
 import android.widget.TextView
@@ -9,6 +10,7 @@ import com.asd2.uaca.data.Client
 import com.asd2.uaca.data.Entry
 import org.json.JSONArray
 import org.json.JSONObject
+import java.util.*
 
 class EntryManager(private val context: Context,private val apiCredentials: ApiCredentials) {
 
@@ -48,7 +50,11 @@ class EntryManager(private val context: Context,private val apiCredentials: ApiC
             }
 
             //
-            entry.created = item.getString("Date")
+            val pieces = item.getString("Date").split("T")
+            val date = pieces.first().split("-")
+
+            //
+            entry.created = String.format("%s-%s-%s", date[2], date[1], date[0])
             entry.comments = item.getString("Comments")
             entry.item = item.getString("Item")
             entry.client = resolveClient(item.getJSONObject("Client"))
