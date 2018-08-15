@@ -8,6 +8,10 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.DatePicker
+import com.asd2.uaca.business.ApiCredentials
+import com.asd2.uaca.business.ClientManager
+import com.asd2.uaca.business.EntryManager
+import com.asd2.uaca.data.Client
 import com.asd2.uaca.data.Entry
 import kotlinx.android.synthetic.main.activity_entry.*
 import java.text.SimpleDateFormat
@@ -15,12 +19,37 @@ import java.util.*
 
 class EntryActivity : AppCompatActivity() {
 
+    private lateinit var apiCredentials: ApiCredentials
+    private lateinit var clientManager: ClientManager
+    private lateinit var entryManager: EntryManager
     private lateinit var entry: Entry
     private lateinit var calendar: Calendar
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_entry)
+
+        //
+        btnSave.setOnClickListener {
+            val clientDNI = auTxtDNI.text.toString()
+            var client = clientManager.clients.find { c -> c.dni.equals(clientDNI) }
+            if(null == client) {
+               client = Client(0)
+            }
+            client.fullname = txtClientName.text.toString()
+
+            // On new client
+            if(0 == client.key) {
+                // Insert new client then merge entry
+                addNewClient(client)
+            } else {
+                // Merge entry
+                mergeEntry(client)
+            }
+        }
+
+        //
+        initialization()
 
         //
         initializeElements()
@@ -35,6 +64,34 @@ class EntryActivity : AppCompatActivity() {
             return true
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    private fun addNewClient(client: Client) {
+        //
+        clientManager.mergeEntity(client) {
+            mergeEntry(it as Client)
+        }
+    }
+
+    private fun mergeEntry(client: Client) {
+        //
+
+    }
+
+    private fun initialization() {
+        // Init ApiCredentials attribute
+        apiCredentials = ApiCredentials(this)
+        apiCredentials.cleanUpTokenAccessAt(0)
+        apiCredentials.txtView = txtView
+
+        // Init ClientManager attribute
+        clientManager = ClientManager(this, apiCredentials)
+        clientManager.txtView = txtView
+        clientManager.autoCompleteTextView = auTxtDNI
+
+        // Init EntryManager attribute
+        entryManager = EntryManager(this, apiCredentials)
+        entryManager.txtView = txtView
     }
 
     private fun initializeElements() {
@@ -106,7 +163,15 @@ class EntryActivity : AppCompatActivity() {
     }
 
     private fun setAutocomplete() {
+        //
+        clientManager.findAll()
 
+        //
+        auTxtDNI.setOnItemClickListener { _, _, i, _ ->
+            //
+            val client = clientManager.clients[i]
+            txtClientName.setText(client.fullname)
+        }
     }
 
     private fun setUpCurrentEntry() {

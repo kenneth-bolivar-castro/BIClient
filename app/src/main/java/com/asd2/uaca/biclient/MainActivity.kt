@@ -84,9 +84,9 @@ class MainActivity : AppCompatActivity() {
 
         entryManager.findAll()
 
-        listViewEntries.setOnItemClickListener { parent, view, index, id ->
+        listViewEntries.setOnItemClickListener { _, _, i, _ ->
             //
-            openEntryActivity(entryManager.entries[index])
+            openEntryActivity(entryManager.entries[i])
         }
     }
 

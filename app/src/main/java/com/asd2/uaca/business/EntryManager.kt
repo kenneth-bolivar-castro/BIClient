@@ -1,10 +1,9 @@
 package com.asd2.uaca.business
 
 import android.content.Context
-import android.os.Build
+import android.content.Entity
 import android.widget.ArrayAdapter
 import android.widget.ListView
-import android.widget.TextView
 import com.android.volley.Response
 import com.asd2.uaca.data.Client
 import com.asd2.uaca.data.Entry
@@ -12,10 +11,10 @@ import org.json.JSONArray
 import org.json.JSONObject
 import java.util.*
 
-class EntryManager(private val context: Context,private val apiCredentials: ApiCredentials) {
+class EntryManager(context: Context,
+                   apiCredentials: ApiCredentials)
+    : AbstractManager(context, apiCredentials) {
 
-    private var settings: Settings = Settings(context)
-    lateinit var txtView: TextView
     lateinit var listView: ListView
     var entries: ArrayList<Entry> = ArrayList()
 
@@ -64,7 +63,7 @@ class EntryManager(private val context: Context,private val apiCredentials: ApiC
         }
     }
 
-    private fun fillOutListView(result: JSONArray) {
+    override fun fillOut(result: JSONArray) {
         //
         resolveEntries(result)
 
@@ -84,7 +83,7 @@ class EntryManager(private val context: Context,private val apiCredentials: ApiC
         )
     }
 
-    fun findAll() {
+    override fun findAll() {
         // Invoke callback after retrieve authentication token.
         apiCredentials.setTokenAndRunCallback {
             // Create new httpClient
@@ -96,13 +95,13 @@ class EntryManager(private val context: Context,private val apiCredentials: ApiC
             // Setup authorize attribute
             httpClient.authorization = it
 
-            // Consume web-service by POST method
+            // Consume web-service by GET method
             httpClient.get(Response.Listener { response ->
                 // Parse result into a JSON object
                 val result = JSONArray(response)
 
                 // Expose result within text view
-                fillOutListView(result)
+                fillOut(result)
 
                 // Clean up txtView
                 txtView.text = null
@@ -110,5 +109,9 @@ class EntryManager(private val context: Context,private val apiCredentials: ApiC
                 Common.showErrorMessage(context, txtView, it.message)
             })
         }
+    }
+
+    override fun mergeEntity(entity: Any, callback: (entity: Any) -> Unit) {
+
     }
 }
