@@ -4,6 +4,7 @@ import android.app.DatePickerDialog
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import android.widget.ArrayAdapter
@@ -37,6 +38,9 @@ class EntryActivity : AppCompatActivity() {
                client = Client(0)
             }
             client.fullname = txtClientName.text.toString()
+            client.dni = clientDNI
+            client.phoneNumber = txtClientPhone.text.toString()
+            client.email = txtClientEmail.text.toString()
 
             // On new client
             if(0 == client.key) {
@@ -69,13 +73,15 @@ class EntryActivity : AppCompatActivity() {
     private fun addNewClient(client: Client) {
         //
         clientManager.mergeEntity(client) {
-            mergeEntry(it as Client)
+            val newClient = it as Client
+            clientManager.clients.add(newClient)
+            mergeEntry(newClient)
         }
     }
 
     private fun mergeEntry(client: Client) {
         //
-
+        Log.d(Log.DEBUG.toString(), client.toString())
     }
 
     private fun initialization() {
@@ -171,6 +177,8 @@ class EntryActivity : AppCompatActivity() {
             //
             val client = clientManager.clients[i]
             txtClientName.setText(client.fullname)
+            txtClientPhone.setText(client.phoneNumber)
+            txtClientEmail.setText(client.email)
         }
     }
 

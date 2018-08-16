@@ -118,11 +118,15 @@ class ClientManager(context: Context,
                 val result = JSONObject(response)
 
                 // Setup access token into settings
-                val clientId = result.getInt("id")!!
+                val clientId = result.getInt("Id")!!
 
                 // Setup client instance
                 val newClient = client.copy(key = clientId)
-                
+                newClient.fullname = client.fullname
+                newClient.dni = client.dni
+                newClient.phoneNumber = client.phoneNumber
+                newClient.email = client.email
+
                 // Extract bearer token value
                 callback(newClient)
             }, Response.ErrorListener {

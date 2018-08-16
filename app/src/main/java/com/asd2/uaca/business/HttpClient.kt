@@ -70,7 +70,6 @@ class HttpClient(private val context: Context) {
         private fun getHeaders(authorization: String): HashMap<String, String> {
             // Setup headers properly
             return hashMapOf(
-                    "Content-Type" to "application/json",
                     "Authorization" to "Bearer $authorization"
             )
         }
