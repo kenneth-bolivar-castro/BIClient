@@ -37,7 +37,15 @@ class ClientManager(context: Context,
             client.email = item.getString("Email")
 
             //
-            clients.add(client)
+            val idx = clients.indexOf(client)
+            if(-1 == idx) {
+                //
+                clients.add(client)
+            } else {
+                //
+                clients[idx] = client
+            }
+
         }
     }
 

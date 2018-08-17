@@ -13,34 +13,10 @@ class HttpClient(private val context: Context) {
     lateinit var url: String
     var authorization: String? = null
 
-    fun get(listener: Listener<String>, errorListener: ErrorListener) {
-        //
-        val request = object : StringRequest(
-                Request.Method.GET,
-                url,
-                listener,
-                errorListener
-        ) {
-            @Throws(AuthFailureError::class)
-            override fun getHeaders(): Map<String, String> {
-                // When authorization was defined
-                if (null != authorization) {
-                    return getHeaders(authorization!!)
-                }
-
-                // Returns parent headers
-                return super.getHeaders()
-            }
-        }
-
-        Volley.newRequestQueue(context).add(request)
-    }
-
-    fun post(listener: Listener<String>, errorListener: ErrorListener,
-             params: HashMap<String, String>? = null) {
-        //
-        val request = object : StringRequest(
-                Request.Method.POST,
+    private fun makeStringRequest(httpMethod: Int, listener: Listener<String>, errorListener: ErrorListener,
+                                  params: HashMap<String, String>? = null): StringRequest {
+        return object : StringRequest(
+                httpMethod,
                 url,
                 listener,
                 errorListener
@@ -61,6 +37,41 @@ class HttpClient(private val context: Context) {
                 return super.getHeaders()
             }
         }
+    }
+
+    fun get(listener: Listener<String>, errorListener: ErrorListener) {
+        //
+        val request = makeStringRequest(
+                Request.Method.GET,
+                listener,
+                errorListener
+        )
+
+        Volley.newRequestQueue(context).add(request)
+    }
+
+    fun post(listener: Listener<String>, errorListener: ErrorListener,
+             params: HashMap<String, String>? = null) {
+        //
+        val request = makeStringRequest(
+                Request.Method.POST,
+                listener,
+                errorListener,
+                params
+        )
+
+        Volley.newRequestQueue(context).add(request)
+    }
+
+    fun put(listener: Listener<String>, errorListener: ErrorListener,
+             params: HashMap<String, String>? = null) {
+        //
+        val request = makeStringRequest(
+                Request.Method.PUT,
+                listener,
+                errorListener,
+                params
+        )
 
         Volley.newRequestQueue(context).add(request)
     }

@@ -72,7 +72,13 @@ class EntryManager(context: Context,
             entry.client = resolveClient(item.getJSONObject("Client"))
 
             //
-            entries.add(entry)
+            val idx = entries.indexOf(entry)
+            if(-1 == idx) {
+                //
+                entries.add(entry)
+            } else {
+                entries[idx] = entry
+            }
         }
     }
 
@@ -127,7 +133,7 @@ class EntryManager(context: Context,
 
             // Define proper endpoint URL
             var endpointUrl = fullUrl
-            if(isNew) {
+            if(!isNew) {
                 endpointUrl = "${fullUrl}/${entry.key}"
             }
 
@@ -156,8 +162,15 @@ class EntryManager(context: Context,
                         params
                 )
             } else {
-                // Consume web-service by PUT method
+                // Include Id parameter value
+                params["Id"] = entry.key.toString()
 
+                // Consume web-service by PUT method
+                httpClient.put(
+                        getResponseListener(callback),
+                        getResponseErrorListener(),
+                        params
+                )
             }
         }
     }
