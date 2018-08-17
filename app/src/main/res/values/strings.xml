@@ -21,7 +21,7 @@
         <item>Produccion</item>
     </string-array>
     <string-array name="pref_example_list_values">
-        <item>http://192.168.43.43:49192</item>
+        <item>http://192.168.1.8:49192</item>
         <item>https://webmvc-bi-client.azurewebsites.net</item>
     </string-array>
 
@@ -37,6 +37,7 @@
     <string name="btn_entry_save">Salvar</string>
     <string name="entry_client_email">Correo</string>
     <string name="entry_client_phone">Telefono</string>
+    <string name="entry_saved_info">Solicitud almacenada</string>
     <string-array name="list_entry_statuses">
         <item>Solicitud</item>
         <item>Cancelado</item>

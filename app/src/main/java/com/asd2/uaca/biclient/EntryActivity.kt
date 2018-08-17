@@ -4,11 +4,11 @@ import android.app.DatePickerDialog
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.DatePicker
+import android.widget.Toast
 import com.asd2.uaca.business.ApiCredentials
 import com.asd2.uaca.business.ClientManager
 import com.asd2.uaca.business.EntryManager
@@ -73,6 +73,7 @@ class EntryActivity : AppCompatActivity() {
     private fun addNewClient(client: Client) {
         //
         clientManager.mergeEntity(client) {
+            // New client was properly persistent
             val newClient = it as Client
             clientManager.clients.add(newClient)
             mergeEntry(newClient)
@@ -80,8 +81,27 @@ class EntryActivity : AppCompatActivity() {
     }
 
     private fun mergeEntry(client: Client) {
-        //
-        Log.d(Log.DEBUG.toString(), client.toString())
+        /**
+         * At this point given client is already stored into database,
+         * then current entry must be updated and setup client reference.
+         */
+        entry.created = txtDate.text.toString()
+        entry.item = txtEntryItem.text.toString()
+        entry.comments = txtEntryComments.text.toString()
+        entry.client = client
+
+        if(0 == entry.key) {
+            entry.status = Entry.Statuses.NEW
+        } else {
+            entry.status = Entry.getStatus(spinStatuses.selectedItemPosition)
+        }
+
+        // Then invoke merge entity over entryManager.
+        entryManager.mergeEntity(entry) {
+            // Once it was already stored, notify about process and start main activity.
+            Toast.makeText(this, getString(R.string.entry_saved_info), Toast.LENGTH_LONG).show()
+            startActivity(Intent(this, MainActivity::class.java))
+        }
     }
 
     private fun initialization() {
@@ -173,9 +193,12 @@ class EntryActivity : AppCompatActivity() {
         clientManager.findAll()
 
         //
-        auTxtDNI.setOnItemClickListener { _, _, i, _ ->
+        auTxtDNI.setOnItemClickListener { adapter, _, i, _ ->
             //
-            val client = clientManager.clients[i]
+            val item = adapter.getItemAtPosition(i)
+
+            //
+            val client = clientManager.clients.find { c -> c.dni == item }!!
             txtClientName.setText(client.fullname)
             txtClientPhone.setText(client.phoneNumber)
             txtClientEmail.setText(client.email)
@@ -195,6 +218,8 @@ class EntryActivity : AppCompatActivity() {
             txtDate.setText(entry.created)
             auTxtDNI.setText(entry.client.dni)
             txtClientName.setText(entry.client.fullname)
+            txtClientPhone.setText(entry.client.phoneNumber)
+            txtClientEmail.setText(entry.client.email)
             txtEntryItem.setText(entry.item)
             txtEntryComments.setText(entry.comments)
 

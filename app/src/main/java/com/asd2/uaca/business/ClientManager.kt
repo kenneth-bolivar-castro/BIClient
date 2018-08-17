@@ -14,6 +14,7 @@ class ClientManager(context: Context,
 
     lateinit var autoCompleteTextView: AutoCompleteTextView
     var clients: ArrayList<Client> = ArrayList()
+    override var fullUrl = settings.endpoint + Client.CLIENT_PATH
 
     private fun resolveClients(result: JSONArray) {
         // Get through all result items
@@ -40,19 +41,6 @@ class ClientManager(context: Context,
         }
     }
 
-    private fun getHttpClient(context: Context, authorization: String): HttpClient {
-        // Create new httpClient
-        val httpClient = HttpClient(context)
-
-        // Setup url to retrieve TOKEN
-        httpClient.url = settings.endpoint + Client.CLIENT_PATH
-
-        // Setup authorize attribute
-        httpClient.authorization = authorization
-
-        return httpClient
-    }
-
     override fun fillOut(result: JSONArray) {
         //
         resolveClients(result)
@@ -77,7 +65,7 @@ class ClientManager(context: Context,
         // Invoke callback after retrieve authentication token.
         apiCredentials.setTokenAndRunCallback {
             // Get httpClient instance
-            val httpClient = getHttpClient(context, it)
+            val httpClient = Common.getHttpClient(context, it, fullUrl)
 
             // Consume web-service by GET method
             httpClient.get(Response.Listener { response ->
@@ -89,9 +77,7 @@ class ClientManager(context: Context,
 
                 // Clean up txtView
                 txtView.text = null
-            }, Response.ErrorListener {
-                Common.showErrorMessage(context, txtView, it.message)
-            })
+            }, getResponseErrorListener())
         }
     }
 
@@ -102,7 +88,7 @@ class ClientManager(context: Context,
         //
         apiCredentials.setTokenAndRunCallback {
             // Get httpClient instance
-            val httpClient = getHttpClient(context, it)
+            val httpClient = Common.getHttpClient(context, it, fullUrl)
 
             // Setup parameters to create a client
             val params = hashMapOf(
@@ -129,11 +115,7 @@ class ClientManager(context: Context,
 
                 // Extract bearer token value
                 callback(newClient)
-            }, Response.ErrorListener {
-                Common.showErrorMessage(context, txtView, it.message)
-            }, params)
-
-
+            }, getResponseErrorListener(), params)
         }
     }
 }

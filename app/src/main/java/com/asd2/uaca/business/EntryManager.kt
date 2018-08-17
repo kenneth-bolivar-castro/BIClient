@@ -1,7 +1,8 @@
 package com.asd2.uaca.business
 
 import android.content.Context
-import android.content.Entity
+import android.os.Build
+import android.support.annotation.RequiresApi
 import android.widget.ArrayAdapter
 import android.widget.ListView
 import com.android.volley.Response
@@ -9,6 +10,7 @@ import com.asd2.uaca.data.Client
 import com.asd2.uaca.data.Entry
 import org.json.JSONArray
 import org.json.JSONObject
+import java.time.LocalDateTime
 import java.util.*
 
 class EntryManager(context: Context,
@@ -17,6 +19,17 @@ class EntryManager(context: Context,
 
     lateinit var listView: ListView
     var entries: ArrayList<Entry> = ArrayList()
+    override var fullUrl = settings.endpoint + Entry.ENTRY_PATH
+
+    private fun getResponseListener(callback: (entity: Any) -> Unit): Response.Listener<String> {
+        return Response.Listener {
+            // Parse result into a JSON object
+            val result = JSONObject(it)
+
+            // Execute given callback function
+            callback(result)
+        }
+    }
 
     private fun resolveClient(item: JSONObject): Client {
         //
@@ -87,13 +100,7 @@ class EntryManager(context: Context,
         // Invoke callback after retrieve authentication token.
         apiCredentials.setTokenAndRunCallback {
             // Create new httpClient
-            val httpClient = HttpClient(context)
-
-            // Setup url to retrieve TOKEN
-            httpClient.url = settings.endpoint + Entry.ENTRY_PATH
-
-            // Setup authorize attribute
-            httpClient.authorization = it
+            val httpClient = Common.getHttpClient(context, it, fullUrl)
 
             // Consume web-service by GET method
             httpClient.get(Response.Listener { response ->
@@ -105,13 +112,53 @@ class EntryManager(context: Context,
 
                 // Clean up txtView
                 txtView.text = null
-            }, Response.ErrorListener {
-                Common.showErrorMessage(context, txtView, it.message)
-            })
+            }, getResponseErrorListener())
         }
     }
 
     override fun mergeEntity(entity: Any, callback: (entity: Any) -> Unit) {
+        //
+        val entry = entity as Entry
 
+        //
+        apiCredentials.setTokenAndRunCallback {
+            // Verify when it is a new entry
+            val isNew = (0 == entry.key)
+
+            // Define proper endpoint URL
+            var endpointUrl = fullUrl
+            if(isNew) {
+                endpointUrl = "${fullUrl}/${entry.key}"
+            }
+
+            // Get httpClient instance
+            val httpClient = Common.getHttpClient(context, it, endpointUrl)
+
+            //
+            val result: List<String> = entry.created.split("-")
+            val date = "${result.last().toInt()}-${result[1].toInt()}-${result.first().toInt()}"
+
+            // Setup parameters to create a client
+            val params = hashMapOf(
+                    "Date" to "${date}T00:00:00.00",
+                    "Comments" to entry.comments,
+                    "Item" to entry.item,
+                    "Status" to Entry.getStatusIndex(entry.status).toString(),
+                    "ClientId" to entry.client.key.toString()
+            )
+
+            // When it is a new entry
+            if(isNew) {
+                // Consume web-service by POST method
+                httpClient.post(
+                        getResponseListener(callback),
+                        getResponseErrorListener(),
+                        params
+                )
+            } else {
+                // Consume web-service by PUT method
+
+            }
+        }
     }
 }

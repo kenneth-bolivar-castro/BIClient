@@ -1,9 +1,8 @@
 package com.asd2.uaca.business
 
 import android.content.Context
-import android.content.Entity
 import android.widget.TextView
-import com.asd2.uaca.data.Client
+import com.android.volley.Response
 import org.json.JSONArray
 
 abstract class AbstractManager(protected val context: Context,
@@ -11,6 +10,13 @@ abstract class AbstractManager(protected val context: Context,
 
     protected var settings: Settings = Settings(context)
     lateinit var txtView: TextView
+    open lateinit var fullUrl: String
+
+    protected fun getResponseErrorListener(): Response.ErrorListener {
+        return Response.ErrorListener {
+            Common.showErrorMessage(context, txtView, it.message)
+        }
+    }
 
     abstract fun findAll()
 
